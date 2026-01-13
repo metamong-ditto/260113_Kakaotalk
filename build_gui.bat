@@ -1,7 +1,7 @@
 @echo off
 chcp 65001 >nul
 echo ========================================
-echo   Building GUI version...
+echo   Building GUI version (folder mode)
 echo ========================================
 echo.
 
@@ -11,16 +11,16 @@ pip install pyautogui pyscreeze mouseinfo pygetwindow pyrect pywinauto pyperclip
 echo.
 echo [Step 2/3] Verifying installation...
 python -c "import pyautogui; print('pyautogui:', pyautogui.__version__)"
-python -c "import pywinauto; print('pywinauto: OK')"
-python -c "import PIL; print('PIL: OK')"
 
 echo.
-echo [Step 3/3] Building exe...
+echo [Step 3/3] Building...
 pyinstaller --clean --noconfirm kakao_openchat_gui.spec
 
 echo.
 echo ========================================
 echo   Build completed!
-echo   Output: dist\kakao_openchat_gui.exe
+echo.
+echo   Output folder: dist\kakao_openchat_gui\
+echo   Run: dist\kakao_openchat_gui\kakao_openchat_gui.exe
 echo ========================================
 pause
