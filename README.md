@@ -102,11 +102,66 @@ for room in rooms:
     print(f"{room.name}: {room.member_count}명")
 ```
 
+## 실행 파일 빌드 (PyInstaller)
+
+Python 없이도 실행할 수 있는 단일 실행 파일(.exe)을 만들 수 있습니다.
+
+### 빌드 방법
+
+**Windows:**
+```batch
+build.bat
+```
+
+**Linux/Mac:**
+```bash
+chmod +x build.sh
+./build.sh
+```
+
+**또는 직접 빌드:**
+```bash
+# 의존성 설치
+pip install -r requirements.txt
+
+# 빌드 실행
+python build.py --clean
+```
+
+### 빌드 옵션
+
+```bash
+python build.py              # 기본 빌드 (단일 파일)
+python build.py --clean      # 이전 빌드 삭제 후 빌드
+python build.py --onedir     # 디렉토리 모드로 빌드 (더 빠른 시작)
+python build.py --clean-only # 빌드 없이 정리만
+```
+
+### 빌드 결과
+
+빌드가 완료되면 `dist/` 폴더에 실행 파일이 생성됩니다:
+- Windows: `dist/kakao_openchat.exe`
+- Linux/Mac: `dist/kakao_openchat`
+
+### 실행 파일 사용
+
+```bash
+# 대화형 모드
+./kakao_openchat
+
+# 직접 검색
+./kakao_openchat "파이썬"
+
+# CSV로 저장
+./kakao_openchat "주식" -n 50 -o result.csv
+```
+
 ## 주의 사항
 
 - 이 도구는 교육 및 개인적인 용도로만 사용해주세요.
 - 카카오 서비스 이용 약관을 준수해주세요.
 - 과도한 요청은 IP 차단의 원인이 될 수 있습니다.
+- 실행 파일을 사용하려면 Chrome 브라우저가 설치되어 있어야 합니다.
 
 ## 라이선스
 
