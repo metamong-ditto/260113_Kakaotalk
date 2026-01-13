@@ -1,7 +1,7 @@
 @echo off
 chcp 65001 >nul
 echo ========================================
-echo   Building GUI version
+echo   Building GUI version (onefile)
 echo ========================================
 echo.
 
@@ -21,8 +21,6 @@ python -m PyInstaller --clean --noconfirm kakao_openchat_gui.spec
 echo.
 echo ========================================
 echo   Build completed!
-echo.
-echo   Output folder: dist\kakao_openchat_gui\
-echo   Run: dist\kakao_openchat_gui\kakao_openchat_gui.exe
+echo   Output: dist\kakao_openchat_gui.exe
 echo ========================================
 pause
