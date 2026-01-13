@@ -1,6 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 """
-PyInstaller spec file for Kakao OpenChat Member Counter
+PyInstaller spec file for Kakao OpenChat Member Counter (PC Automation)
 """
 
 import sys
@@ -8,34 +8,23 @@ from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 block_cipher = None
 
-# Selenium과 webdriver-manager의 숨겨진 import 수집
+# Hidden imports for pyautogui, pywinauto, etc.
 hidden_imports = [
-    'selenium',
-    'selenium.webdriver',
-    'selenium.webdriver.chrome',
-    'selenium.webdriver.chrome.service',
-    'selenium.webdriver.chrome.options',
-    'selenium.webdriver.common',
-    'selenium.webdriver.common.by',
-    'selenium.webdriver.support',
-    'selenium.webdriver.support.ui',
-    'selenium.webdriver.support.expected_conditions',
-    'webdriver_manager',
-    'webdriver_manager.chrome',
-    'webdriver_manager.core',
-    'webdriver_manager.core.download_manager',
-    'webdriver_manager.core.driver_cache',
-    'webdriver_manager.core.os_manager',
-    'bs4',
-    'urllib3',
-    'certifi',
-    'requests',
+    'pyautogui',
+    'pyperclip',
+    'PIL',
+    'PIL.Image',
+    'pytesseract',
+    'pywinauto',
+    'pywinauto.application',
+    'pywinauto.findwindows',
+    'pyscreeze',
+    'mouseinfo',
 ]
 
-# 데이터 파일 수집
+# Collect data files
 datas = []
-datas += collect_data_files('selenium')
-datas += collect_data_files('certifi')
+datas += collect_data_files('pyautogui')
 
 a = Analysis(
     ['main.py'],
@@ -69,11 +58,11 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,  # 콘솔 앱으로 빌드
+    console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=None,  # 아이콘 파일이 있으면 여기에 경로 지정
+    icon=None,
 )

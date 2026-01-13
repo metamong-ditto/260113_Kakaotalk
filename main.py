@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-카카오톡 오픈채팅방 인원 수 확인 도구
+카카오톡 PC 오픈채팅방 인원 수 확인 도구
 
 사용법:
     python main.py                    # 대화형 모드
@@ -20,7 +20,7 @@ def export_to_csv(rooms: list[OpenChatRoom], filename: str, keyword: str):
     """검색 결과를 CSV 파일로 저장"""
     with open(filename, "w", newline="", encoding="utf-8-sig") as f:
         writer = csv.writer(f)
-        writer.writerow(["순위", "채팅방 이름", "인원 수", "설명", "링크"])
+        writer.writerow(["순위", "채팅방 이름", "인원 수", "설명"])
 
         sorted_rooms = sorted(rooms, key=lambda x: x.member_count, reverse=True)
         for i, room in enumerate(sorted_rooms, 1):
@@ -28,8 +28,7 @@ def export_to_csv(rooms: list[OpenChatRoom], filename: str, keyword: str):
                 i,
                 room.name,
                 room.member_count,
-                room.description or "",
-                room.link or ""
+                room.description or ""
             ])
 
     print(f"\n결과가 '{filename}'에 저장되었습니다.")
@@ -38,8 +37,12 @@ def export_to_csv(rooms: list[OpenChatRoom], filename: str, keyword: str):
 def interactive_mode():
     """대화형 모드"""
     print("=" * 60)
-    print("카카오톡 오픈채팅방 인원 수 확인 도구")
+    print("카카오톡 PC 오픈채팅방 인원 수 확인 도구")
     print("=" * 60)
+    print("\n[필수 조건]")
+    print("  1. 카카오톡 PC 버전이 실행되어 있어야 합니다")
+    print("  2. 카카오톡에 로그인되어 있어야 합니다")
+    print("  3. Tesseract OCR이 설치되어 있어야 합니다")
     print("\n종료하려면 'q' 또는 'quit'를 입력하세요.\n")
 
     while True:
@@ -54,11 +57,10 @@ def interactive_mode():
                 print("키워드를 입력해주세요.\n")
                 continue
 
-            max_results_input = input("최대 결과 수 (기본값: 20): ").strip()
-            max_results = int(max_results_input) if max_results_input else 20
-
             print(f"\n'{keyword}' 검색 중...")
-            rooms = search_openchat(keyword, max_results)
+            print("잠시 기다려주세요. 카카오톡 창이 자동으로 조작됩니다.\n")
+
+            rooms = search_openchat(keyword)
 
             if rooms:
                 print_results(rooms, keyword)
@@ -70,29 +72,30 @@ def interactive_mode():
                     export_to_csv(rooms, filename, keyword)
             else:
                 print(f"'{keyword}'에 대한 검색 결과가 없습니다.")
+                print("카카오톡 PC가 실행 중인지 확인해주세요.")
 
             print("\n" + "-" * 60 + "\n")
 
         except KeyboardInterrupt:
             print("\n\n프로그램을 종료합니다.")
             break
-        except ValueError:
-            print("올바른 숫자를 입력해주세요.\n")
         except Exception as e:
             print(f"오류가 발생했습니다: {e}\n")
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="카카오톡 오픈채팅방 검색 및 인원 수 확인 도구",
+        description="카카오톡 PC 오픈채팅방 검색 및 인원 수 확인 도구",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 예시:
     python main.py                        # 대화형 모드
     python main.py "파이썬"               # '파이썬' 검색
-    python main.py "주식" -n 50           # '주식' 검색, 최대 50개
     python main.py "영어" -o english.csv  # CSV로 저장
-    python main.py "게임" --no-headless   # 브라우저 표시
+
+필수 조건:
+    - 카카오톡 PC 버전 실행 및 로그인
+    - Tesseract OCR 설치 (https://github.com/tesseract-ocr/tesseract)
         """
     )
     parser.add_argument(
@@ -101,19 +104,8 @@ def main():
         help="검색할 키워드 (없으면 대화형 모드)"
     )
     parser.add_argument(
-        "-n", "--max-results",
-        type=int,
-        default=20,
-        help="최대 결과 수 (기본값: 20)"
-    )
-    parser.add_argument(
         "-o", "--output",
         help="결과를 저장할 CSV 파일명"
-    )
-    parser.add_argument(
-        "--no-headless",
-        action="store_true",
-        help="브라우저 창을 표시합니다"
     )
 
     args = parser.parse_args()
@@ -123,12 +115,10 @@ def main():
         return
 
     print(f"'{args.keyword}' 키워드로 오픈채팅방 검색 중...")
+    print("카카오톡 PC가 실행되어 있어야 합니다.")
+    print()
 
-    rooms = search_openchat(
-        keyword=args.keyword,
-        max_results=args.max_results,
-        headless=not args.no_headless
-    )
+    rooms = search_openchat(args.keyword)
 
     print_results(rooms, args.keyword)
 
