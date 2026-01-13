@@ -1,7 +1,6 @@
 # 카카오톡 오픈채팅방 인원 수 확인 도구
 
 카카오톡 PC 버전에서 오픈채팅방을 검색하고, 채팅방 이름과 인원 수를 확인하는 프로그램입니다.
-PyAutoGUI를 사용한 GUI 자동화 방식으로 동작합니다.
 
 ## 기능
 
@@ -10,14 +9,31 @@ PyAutoGUI를 사용한 GUI 자동화 방식으로 동작합니다.
 - 인원 수 기준 정렬
 - 통계 정보 제공 (총 인원, 평균, 최대/최소)
 - CSV 파일로 결과 저장
-- 대화형 모드 지원
+- **GUI 버전** 및 **CLI 버전** 제공
+
+## 스크린샷
+
+```
+┌─────────────────────────────────────────────────────┐
+│  카카오톡 오픈채팅 인원 확인                          │
+├─────────────────────────────────────────────────────┤
+│  검색어: [파이썬        ]  [검색]  [CSV 저장]        │
+├─────────────────────────────────────────────────────┤
+│  순위 │ 채팅방 이름              │ 인원 수          │
+│  ─────┼──────────────────────────┼─────────────────│
+│   1   │ 파이썬 코딩 스터디        │ 2,345명         │
+│   2   │ 파이썬 개발자 모임        │ 1,890명         │
+│   3   │ 파이썬 입문자 환영        │ 1,234명         │
+├─────────────────────────────────────────────────────┤
+│  검색 완료: 10개 채팅방  │  총: 8,500명 평균: 850명 │
+└─────────────────────────────────────────────────────┘
+```
 
 ## 필수 조건
 
 1. **Windows OS** (카카오톡 PC 버전 필요)
 2. **카카오톡 PC** 설치 및 로그인
-3. **Python 3.10 이상**
-4. **Tesseract OCR** 설치
+3. **Tesseract OCR** 설치
 
 ### Tesseract OCR 설치
 
@@ -27,94 +43,75 @@ OCR(문자 인식)을 위해 Tesseract가 필요합니다.
 2. 설치 시 "Additional language data" 에서 **Korean** 선택
 3. 설치 후 시스템 PATH에 추가 (기본: `C:\Program Files\Tesseract-OCR`)
 
-## 설치
+## 실행 파일 빌드 (.exe)
 
-```bash
-pip install -r requirements.txt
+### 빠른 빌드 (GUI 버전만)
+
+```batch
+build_gui.bat
 ```
+
+### 선택적 빌드
+
+```batch
+build.bat
+```
+
+실행하면 메뉴가 표시됩니다:
+```
+[1] Build GUI version (kakao_openchat_gui.exe)
+[2] Build CLI version (kakao_openchat.exe)
+[3] Build both versions
+[4] Exit
+```
+
+### 빌드 결과
+
+| 파일 | 설명 |
+|------|------|
+| `dist/kakao_openchat_gui.exe` | GUI 버전 (창 프로그램) |
+| `dist/kakao_openchat.exe` | CLI 버전 (명령줄) |
 
 ## 사용법
 
-### 사전 준비
+### GUI 버전
 
-1. 카카오톡 PC를 실행하고 로그인합니다
-2. 오픈채팅 탭이 보이는 상태로 둡니다
+1. `kakao_openchat_gui.exe` 실행 (또는 `python gui.py`)
+2. 검색어 입력
+3. "검색" 버튼 클릭
+4. 결과 확인 후 필요시 "CSV 저장"
 
-### 대화형 모드
-
-```bash
-python main.py
-```
-
-### 직접 검색
+### CLI 버전
 
 ```bash
-# 기본 검색
-python main.py "파이썬"
+# 대화형 모드
+kakao_openchat.exe
+
+# 직접 검색
+kakao_openchat.exe "파이썬"
 
 # CSV로 저장
-python main.py "영어" -o result.csv
+kakao_openchat.exe "영어" -o result.csv
 ```
 
-### 옵션
+## Python으로 직접 실행
 
-| 옵션 | 설명 |
-|------|------|
-| `keyword` | 검색할 키워드 (없으면 대화형 모드) |
-| `-o`, `--output` | 결과를 저장할 CSV 파일명 |
-
-## 출력 예시
-
-```
-============================================================
-'파이썬' 검색 결과: 총 10개 채팅방
-============================================================
-
-1. 파이썬 코딩 스터디
-   인원: 2,345명
-
-2. 파이썬 개발자 모임
-   인원: 1,890명
-
-...
-
-============================================================
-통계:
-  - 총 채팅방 수: 10개
-  - 총 인원 수: 8,500명
-  - 평균 인원 수: 850.0명
-  - 최대 인원: 2,345명
-  - 최소 인원: 120명
-============================================================
-```
-
-## 모듈로 사용
-
-```python
-from kakao_openchat_scraper import search_openchat, print_results
-
-# 검색 실행
-rooms = search_openchat("파이썬")
-
-# 결과 출력
-print_results(rooms, "파이썬")
-
-# 개별 채팅방 정보 접근
-for room in rooms:
-    print(f"{room.name}: {room.member_count}명")
-```
-
-## 실행 파일 빌드 (PyInstaller)
+### 설치
 
 ```bash
-# 의존성 설치
 pip install -r requirements.txt
-
-# 빌드 실행
-python build.py --clean
 ```
 
-빌드 완료 후 `dist/kakao_openchat.exe` 생성
+### 실행
+
+```bash
+# GUI 버전
+python gui.py
+
+# CLI 버전
+python main.py
+python main.py "파이썬"
+```
 
 ## 동작 방식
 
@@ -137,12 +134,30 @@ python build.py --clean
 - OCR 인식률에 따라 오차가 있을 수 있습니다
 - 카카오톡 창 크기를 키우면 인식률이 향상됩니다
 
+### GUI가 멈춘 것처럼 보임
+- 검색 중에는 카카오톡이 자동 조작됩니다
+- 잠시 기다려주세요
+
 ## 주의 사항
 
 - 이 도구는 교육 및 개인적인 용도로만 사용해주세요
 - 카카오 서비스 이용 약관을 준수해주세요
 - 프로그램 실행 중 마우스/키보드가 자동 조작됩니다
 - 실행 중에는 다른 작업을 하지 마세요
+
+## 파일 구조
+
+```
+├── gui.py                    # GUI 메인
+├── main.py                   # CLI 메인
+├── kakao_openchat_scraper.py # 핵심 로직
+├── build.bat                 # 빌드 메뉴
+├── build_gui.bat             # GUI 빌드 (빠른 실행)
+├── requirements.txt          # 의존성
+└── dist/
+    ├── kakao_openchat_gui.exe
+    └── kakao_openchat.exe
+```
 
 ## 라이선스
 

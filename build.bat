@@ -1,28 +1,103 @@
 @echo off
 chcp 65001 >nul
-REM Windows Build Script
-REM Usage: build.bat
+REM ========================================
+REM Kakao OpenChat Member Counter - Build
+REM ========================================
 
+echo.
 echo ========================================
-echo Kakao OpenChat Member Counter - Build
+echo   Kakao OpenChat - Build Tool
 echo ========================================
 echo.
+echo [1] Build GUI version (kakao_openchat_gui.exe)
+echo [2] Build CLI version (kakao_openchat.exe)
+echo [3] Build both versions
+echo [4] Exit
+echo.
 
-REM Activate virtual environment if exists
-if exist "venv\Scripts\activate.bat" (
-    echo Activating virtual environment...
-    call venv\Scripts\activate.bat
-)
+set /p choice="Select option (1-4): "
 
-REM Install dependencies
+if "%choice%"=="1" goto build_gui
+if "%choice%"=="2" goto build_cli
+if "%choice%"=="3" goto build_both
+if "%choice%"=="4" goto end
+goto end
+
+:install_deps
+echo.
 echo Installing dependencies...
 pip install -r requirements.txt
+goto :eof
 
-REM Build
+:build_gui
+call :install_deps
 echo.
-echo Starting build...
-python build.py --clean
+echo Building GUI version...
+pyinstaller --clean --onefile --windowed --name=kakao_openchat_gui ^
+    --hidden-import=pyautogui ^
+    --hidden-import=pyperclip ^
+    --hidden-import=PIL ^
+    --hidden-import=PIL.Image ^
+    --hidden-import=pytesseract ^
+    --hidden-import=pywinauto ^
+    --hidden-import=pyscreeze ^
+    gui.py
+echo.
+echo Done! Check: dist\kakao_openchat_gui.exe
+goto end
+
+:build_cli
+call :install_deps
+echo.
+echo Building CLI version...
+pyinstaller --clean --onefile --console --name=kakao_openchat ^
+    --hidden-import=pyautogui ^
+    --hidden-import=pyperclip ^
+    --hidden-import=PIL ^
+    --hidden-import=PIL.Image ^
+    --hidden-import=pytesseract ^
+    --hidden-import=pywinauto ^
+    --hidden-import=pyscreeze ^
+    main.py
+echo.
+echo Done! Check: dist\kakao_openchat.exe
+goto end
+
+:build_both
+call :install_deps
+echo.
+echo Building GUI version...
+pyinstaller --clean --onefile --windowed --name=kakao_openchat_gui ^
+    --hidden-import=pyautogui ^
+    --hidden-import=pyperclip ^
+    --hidden-import=PIL ^
+    --hidden-import=PIL.Image ^
+    --hidden-import=pytesseract ^
+    --hidden-import=pywinauto ^
+    --hidden-import=pyscreeze ^
+    gui.py
 
 echo.
-echo Done! Check kakao_openchat.exe in dist folder.
+echo Building CLI version...
+pyinstaller --clean --onefile --console --name=kakao_openchat ^
+    --hidden-import=pyautogui ^
+    --hidden-import=pyperclip ^
+    --hidden-import=PIL ^
+    --hidden-import=PIL.Image ^
+    --hidden-import=pytesseract ^
+    --hidden-import=pywinauto ^
+    --hidden-import=pyscreeze ^
+    main.py
+
+echo.
+echo ========================================
+echo Build completed!
+echo ========================================
+echo.
+echo GUI version: dist\kakao_openchat_gui.exe
+echo CLI version: dist\kakao_openchat.exe
+goto end
+
+:end
+echo.
 pause
