@@ -16,8 +16,8 @@ class KakaoOpenChatGUI:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("카카오톡 오픈채팅 인원 확인")
-        self.root.geometry("700x500")
-        self.root.minsize(600, 400)
+        self.root.geometry("700x550")
+        self.root.minsize(600, 450)
 
         # 결과 저장용
         self.rooms = []
@@ -31,7 +31,14 @@ class KakaoOpenChatGUI:
         main_frame = ttk.Frame(self.root, padding="10")
         main_frame.pack(fill=tk.BOTH, expand=True)
 
-        # === 상단: 검색 영역 ===
+        # === 안내 메시지 ===
+        info_frame = ttk.LabelFrame(main_frame, text="사용 방법", padding="10")
+        info_frame.pack(fill=tk.X, pady=(0, 10))
+
+        info_text = "1. 카카오톡 PC에서 오픈채팅 검색 화면을 열어주세요\n2. 검색창에 커서를 클릭해주세요\n3. 아래에 검색어를 입력하고 [검색] 버튼을 클릭하세요"
+        ttk.Label(info_frame, text=info_text, justify=tk.LEFT).pack(anchor=tk.W)
+
+        # === 검색 영역 ===
         search_frame = ttk.LabelFrame(main_frame, text="검색", padding="10")
         search_frame.pack(fill=tk.X, pady=(0, 10))
 
@@ -51,13 +58,13 @@ class KakaoOpenChatGUI:
         self.save_btn = ttk.Button(search_frame, text="CSV 저장", command=self.save_csv, state=tk.DISABLED)
         self.save_btn.pack(side=tk.LEFT)
 
-        # === 중앙: 결과 테이블 ===
+        # === 결과 테이블 ===
         result_frame = ttk.LabelFrame(main_frame, text="검색 결과", padding="10")
         result_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
 
         # 트리뷰 (테이블)
         columns = ("rank", "name", "members")
-        self.tree = ttk.Treeview(result_frame, columns=columns, show="headings", height=12)
+        self.tree = ttk.Treeview(result_frame, columns=columns, show="headings", height=10)
 
         self.tree.heading("rank", text="순위")
         self.tree.heading("name", text="채팅방 이름")
@@ -79,7 +86,7 @@ class KakaoOpenChatGUI:
         status_frame.pack(fill=tk.X)
 
         # 상태 표시
-        self.status_var = tk.StringVar(value="카카오톡 PC를 실행하고 검색어를 입력하세요.")
+        self.status_var = tk.StringVar(value="카카오톡 오픈채팅 검색 화면을 준비해주세요.")
         self.status_label = ttk.Label(status_frame, textvariable=self.status_var)
         self.status_label.pack(side=tk.LEFT)
 
@@ -104,10 +111,19 @@ class KakaoOpenChatGUI:
             messagebox.showwarning("경고", "검색어를 입력하세요.")
             return
 
+        # 사용자 확인
+        if not messagebox.askokcancel(
+            "검색 시작",
+            "카카오톡 오픈채팅 검색창에 커서가 있나요?\n\n"
+            "[확인]을 누르면 3초 후 자동으로 검색어가 입력됩니다.\n"
+            "3초 안에 카카오톡 검색창을 클릭해주세요!"
+        ):
+            return
+
         # UI 상태 변경
         self.search_btn.config(state=tk.DISABLED)
         self.save_btn.config(state=tk.DISABLED)
-        self.status_var.set(f"'{keyword}' 검색 중... 잠시 기다려주세요.")
+        self.status_var.set("3초 후 검색을 시작합니다... 카카오톡 검색창을 클릭하세요!")
         self.progress.start()
 
         # 결과 초기화
@@ -115,6 +131,13 @@ class KakaoOpenChatGUI:
             self.tree.delete(item)
         self.rooms = []
         self.stats_var.set("")
+
+        # 3초 후 검색 시작
+        self.root.after(3000, lambda: self.delayed_search(keyword))
+
+    def delayed_search(self, keyword: str):
+        """3초 후 실제 검색 시작"""
+        self.status_var.set(f"'{keyword}' 검색 중...")
 
         # 별도 스레드에서 검색 실행
         thread = threading.Thread(target=self.do_search, args=(keyword,))
@@ -137,7 +160,7 @@ class KakaoOpenChatGUI:
         self.rooms = rooms
 
         if not rooms:
-            self.status_var.set(f"'{keyword}' 검색 결과가 없습니다.")
+            self.status_var.set(f"'{keyword}' 검색 결과가 없습니다. (OCR 인식 실패일 수 있음)")
             return
 
         # 인원 수 기준 정렬
