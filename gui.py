@@ -92,6 +92,10 @@ class KakaoOpenChatGUI:
         self.progress = ttk.Progressbar(main_frame, mode='indeterminate')
         self.progress.pack(fill=tk.X, pady=(5, 0))
 
+        # 크레딧
+        credit_label = ttk.Label(main_frame, text="By. 소도몰 이예하 과장", font=("", 8), foreground="gray")
+        credit_label.pack(side=tk.RIGHT, pady=(5, 0))
+
     def start_search(self):
         """검색 시작"""
         keyword = self.keyword_var.get().strip()
