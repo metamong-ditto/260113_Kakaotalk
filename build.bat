@@ -1,27 +1,28 @@
 @echo off
-REM Windows 빌드 스크립트
-REM 사용법: build.bat
+chcp 65001 >nul
+REM Windows Build Script
+REM Usage: build.bat
 
 echo ========================================
-echo 카카오 오픈채팅 인원 확인 도구 빌드
+echo Kakao OpenChat Member Counter - Build
 echo ========================================
 echo.
 
-REM 가상환경 활성화 (있는 경우)
+REM Activate virtual environment if exists
 if exist "venv\Scripts\activate.bat" (
-    echo 가상환경 활성화 중...
+    echo Activating virtual environment...
     call venv\Scripts\activate.bat
 )
 
-REM 의존성 설치
-echo 의존성 설치 중...
+REM Install dependencies
+echo Installing dependencies...
 pip install -r requirements.txt
 
-REM 빌드
+REM Build
 echo.
-echo 빌드 시작...
+echo Starting build...
 python build.py --clean
 
 echo.
-echo 완료! dist 폴더에서 kakao_openchat.exe를 확인하세요.
+echo Done! Check kakao_openchat.exe in dist folder.
 pause
